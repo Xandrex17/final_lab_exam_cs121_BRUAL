@@ -44,9 +44,12 @@ class User_Contain:
             login_check = self.user_manager.login_user(username, password)
             self.username = username
             print(login_check)
-            if login_check == "Login Successful.":
+            login_check = self.user_manager.login_user(username, password)
+            if login_check is True:
                 self.username = username
+                print("Login Successful")
                 return True
-            input("press enter key to continue...")
-            continue
-      
+            else:
+                print("Username not found or invalid password")            
+                input("Press enter to continue...")
+                continue

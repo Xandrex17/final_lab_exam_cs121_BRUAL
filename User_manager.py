@@ -46,6 +46,6 @@ class UserManager:
         if username not in users:
             return
         print("Stored password:", users[username])
-        return "Login Successful."
+        return True
 
     

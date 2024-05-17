@@ -6,19 +6,19 @@ class Score:
     def __init__(self, username, game_date, points = 0, wins = 0):
         self.username = username 
         self.game_date = game_date
-        self.points = point
-        self.wins = win
+        self.points = points
+        self.wins = wins
     
     def reset_score(self):
-        point = 0
+        points = 0
         wins = 0
-        return
+        return points, wins
     
     def reset_total_score(self):
         self.points = 0
         self.wins = 0
         
-    def update_score(self, score, wins):
+    def update_score(self, points, wins):
         self.points += points
         self.wins += wins
     

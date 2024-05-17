@@ -8,7 +8,7 @@ class DiceGames:
         self.username = username
         self.folder_score = "list of scores"
         self.file_score = os.path.join(self.folder_score, "list of rankings")
-        self.create_folder_score
+        self.create_folder_score()
         self.score = Score(self.username,"")
     
     def create_folder_score(self):
@@ -21,16 +21,16 @@ class DiceGames:
             if os.path.exists(self.folder_score):
                 with open(self.file_score, "r") as score_file:
                     for i in score_file:
-                        username, score, win_stages, date = i.strip().split(",")
-                        scores.append((username, int(score), int(win_stages), date))
+                        username, score, player_round, date = i.strip().split(",")
+                        scores.append((username, int(score), int(player_round), date))
             return scores
         except FileNotFoundError:
             return None
         
     def save_scores(self, score):
         with open(self.file_score, "w") as score_file:
-            for username, score, win_stages, game_date in scores:
-                scores.append((username, int(score),int(win_stages), game_date))
+            for username, score, player_round, game_date in scores:
+                scores.append((username, int(score),int(player_round), game_date))
                 score_file.write(f"{username},{score},{wins},{game_date}")
                 
     def show_scores(self):
@@ -65,34 +65,34 @@ class DiceGames:
         while True: 
             for i in range(3):
                 cpu_play = random.randint(1,6)
-                player_play = random.randomint(1,6)
+                player_play = random.randint(1,6)
                 
-                print(f"{self.username} rolled: {palyer_play}")
-                print(" CPU rolled: {cpu_play}")
+                print(f"{self.username} rolled: {player_play}")
+                print(f" CPU rolled: {cpu_play}")
                 if player_play > cpu_play:
                     player_points += 1
                     print(f"You win this round! {self.username}")
-                if player_play < cpu_play:
+                elif player_play < cpu_play:
                     cpu_play += 1
                     print("CPU wint this round!")
                 if player_play == cpu_play:
                     print("Its a tie\n")
             
-            if player_play == cpu_play:
+            if player_points == cpu_points:
                 while player_play == cpu_points:
                     cpu_play = random.randint(1,6)
-                player_play = random.randomint(1,6)
+                    player_play = random.randint(1,6)
                 
-                print(f"{self.username} rolled: {palyer_play}")
-                print(" CPU rolled: {cpu_play}")
-                if player_play > cpu_play:
-                    player_points += 1
-                    print(f"You win this round! {self.username}")
-                if player_play < cpu_play:
-                    cpu_play += 1
-                    print("CPU wint this round!")
-                if player_play == cpu_play:
-                    print("Its a tie\n")
+                    print(f"{self.username} rolled: {player_play}")
+                    print(f" CPU rolled: {cpu_play}")
+                    if player_play > cpu_play:
+                        player_points += 1
+                        print(f"You win this round! {self.username}")
+                    if player_play < cpu_play:
+                        cpu_points += 1
+                        print("CPU wint this round!")
+                    if player_play == cpu_play:
+                        print("Its a tie\n")
                     
             if player_play > cpu_play:
                 player_points += 3
@@ -104,9 +104,17 @@ class DiceGames:
                 if self.to_continue_main():
                     continue
                 else:
-                    high_score = self.get_scores
-                    high_score.append((self.score.record_score()))
-                    high_score.sort()
+                    high_score = self.get_scores()
+                    high_score.append(self.score.record_score())
+                    high_score.sort(key=self.get_scores, reverse=True)
+                    high_score = top_scores[:10] #slice to only the first 10 index
+                    self.save_scores(high_score) #save scores
+                    self.score.reset_total_score() #reset overall score
+                    if player_round < 1:
+                        print(f"Game Over. You won {player_round} stage.")    
+                    else:
+                        print(f"Game Over. You won {player_round} stages.")
+                    break
             if player_points < cpu_points:
                 if player_round == 0:
                     player_points = self.score.reset_score()
@@ -116,26 +124,20 @@ class DiceGames:
                     break
                 
             self.score.update_score(player_points, 0)
-            player_points, cpu_play = self.score.reset_score()
-            self.update_display_scores(player_round)
+            player_points, cpu_points = self.score.reset_score()
+            high_score = self.get_scores()
+            high_score.append(self.score.record_score())
+            high_score.sort(key=lambda x: x[1], reverse=True)
+            high_score = high_score[:10]
+            self.save_scores(high_score)
+            self.score.reset_total_score
+            print("you've lost this stage")
+            if player_round <1:
+                print(f"Game Over. You won {player_round} stage.")
+            else:
+                print(f"Game Over. You won {player_round} stages.")
+            input("Press Enter to Continue...")
             break
-            
-    def update_display_scores(self, player_round):
-        high_score = self.get_scores()
-        high_score.append(self.score.record_score())
-        high_score.sort(key=self.get_scores, reverse=True)
-        high_score = high_score[:10]
-        self.save_scores(high_score)
-        self.score.reset_total_score()
-        if player_round < 1:
-            print(f"Game Over. you won {player_round} stage.")
-        else:
-            print(f"Game Over. you won {player_round} stages.")
-        input("press enter key to continue...")
-    
-    def set_score(self, record):
-        return record[1]
-                    
     def menu(self):
         while True:
             os.system('cls')

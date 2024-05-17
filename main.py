@@ -1,6 +1,6 @@
 #main function to run dice game
 from util.User import User_Contain
-from util.dice_game import DiceGames
+from util.dicegame import DiceGames
 import os
 
 def main():
@@ -15,7 +15,6 @@ def main():
         if choice == '1':
             user.sign_up()
         elif choice == '2':
-            user.login()
             if user.login():
                 login = DiceGames(user.username)
                 login.main_game()
